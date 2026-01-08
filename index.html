@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorteio de Valores - Ações NEXUS</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* HEADER NEXUS */
+        .header-nexus {
+            display: flex;
+            align-items: stretch;
+            background: #e6e6e6;
+            border: 3px solid #000;
+            margin-bottom: 30px;
+        }
+
+        .nexus-box {
+            background: linear-gradient(180deg, #8b1a1a 0%, #5a0f0f 100%);
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 3px solid #000;
+            min-width: 200px;
+        }
+
+        .nexus-logo {
+            font-size: 42px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .nexus-logo .x {
+            color: #ff0000;
+            font-size: 48px;
+        }
+
+        .titulo-acoes {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-style: italic;
+            font-weight: bold;
+            color: #000;
+            padding: 20px;
+        }
+
+        .nexus-box-right {
+            background: linear-gradient(180deg, #8b1a1a 0%, #5a0f0f 100%);
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-left: 3px solid #000;
+            min-width: 200px;
+        }
+
+        /* SELETOR */
+        .selector-box {
+            background: #2a2a2a;
+            padding: 30px;
+            border: 3px solid #444;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .selector-box h3 {
+            color: #ff3b3b;
+            margin-bottom: 20px;
+            font-size: 20px;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #d4a8a8;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            background: #1a1a1a;
+            color: #fff;
+            border: 2px solid #444;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        input::placeholder {
+            color: #666;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #ff3b3b;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #ff3b3b 0%, #c41f1f 100%);
+            color: #fff;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(255, 59, 59, 0.4);
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #e63030 0%, #a81818 100%);
+            box-shadow: 0 6px 20px rgba(255, 59, 59, 0.6);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #444;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* RESULTADO */
+        .result-box {
+            background: #e6e6e6;
+            border: 3px solid #000;
+            padding: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .result-box.show {
+            display: block;
+        }
+
+        .result-header {
+            background: #000;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 18px;
+            text-transform: uppercase;
+        }
+
+        .result-content {
+            padding: 30px;
+            color: #000;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 2px solid #ccc;
+            font-size: 15px;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .result-value {
+            font-weight: 600;
+        }
+
+        .result-valor-sorteado {
+            background: #000;
+            color: #4ade80;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .result-valor-sorteado .label {
+            font-size: 14px;
+            color: #fff;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .result-valor-sorteado .valor {
+            font-size: 32px;
+            font-weight: 900;
+            color: #4ade80;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #357abd 0%, #2d5a8f 100%);
+        }
+
+        /* SOLICITAÇÃO */
+        .solicitacao-box {
+            background: #2a2a2a;
+            padding: 25px;
+            border: 3px solid #444;
+            border-radius: 8px;
+            margin-top: 30px;
+            display: none;
+        }
+
+        .solicitacao-box.show {
+            display: block;
+        }
+
+        .solicitacao-box h3 {
+            color: #ff3b3b;
+            margin-bottom: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .solicitacao-content {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 6px;
+            border: 2px solid #444;
+            margin-bottom: 15px;
+        }
+
+        .solicitacao-texto {
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .comando-texto {
+            color: #4ade80;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .btn-copy {
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            margin-bottom: 10px;
+        }
+
+        .btn-copy:hover {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+
+        /* HISTÓRICO */
+        .historico-box {
+            background: #2a2a2a;
+            padding: 25px;
+            border: 3px solid #444;
+            border-radius: 8px;
+            margin-top: 30px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .historico-box h3 {
+            color: #ff3b3b;
+            margin-bottom: 15px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .historico-item {
+            background: #1a1a1a;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #ff3b3b;
+        }
+
+        .historico-item-nome {
+            font-weight: 700;
+            color: #ff3b3b;
+            margin-bottom: 5px;
+        }
+
+        .historico-item-valor {
+            color: #4ade80;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .empty-historico {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .header-nexus {
+                flex-direction: column;
+            }
+
+            .nexus-box, .nexus-box-right {
+                border-right: none;
+                border-left: none;
+                border-bottom: 3px solid #000;
+                min-width: 100%;
+            }
+
+            .nexus-box-right {
+                border-bottom: none;
+                border-top: 3px solid #000;
+            }
+
+            .titulo-acoes {
+                font-size: 28px;
+            }
+
+            .nexus-logo {
+                font-size: 32px;
+            }
+
+            .nexus-logo .x {
+                font-size: 36px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- HEADER NEXUS -->
+    <div class="header-nexus">
+        <div class="nexus-box">
+            <div class="nexus-logo">NE<span class="x">X</span>US</div>
+        </div>
+        <div class="titulo-acoes">
+            Valores das ações
+        </div>
+        <div class="nexus-box-right">
+            <div class="nexus-logo">NE<span class="x">X</span>US</div>
+        </div>
+    </div>
+
+    <!-- SELETOR DE AÇÃO -->
+    <div class="selector-box">
+        <h3>🎲 Selecione a Ação para Sortear</h3>
+        
+        <label>ID do Player:</label>
+        <input type="text" id="inputPlayerId" placeholder="Digite o ID do player">
+
+        <label>Escolha a Ação:</label>
+        <select id="selectAcao">
+            <option value="">-- Selecione uma ação --</option>
+        </select>
+
+        <button id="btnSortear" onclick="sortearAcao()" disabled>🎲 Sortear Valor</button>
+    </div>
+
+    <!-- RESULTADO -->
+    <div class="result-box" id="resultBox">
+        <div class="result-header">RESULTADO DO SORTEIO</div>
+        <div class="result-content">
+            <div class="result-item">
+                <span class="result-label">ID do Player:</span>
+                <span class="result-value" id="resultPlayerId">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Ação:</span>
+                <span class="result-value" id="resultNome">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Valor Mínimo:</span>
+                <span class="result-value" id="resultMinimo">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Valor Máximo:</span>
+                <span class="result-value" id="resultMaximo">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Item Necessário:</span>
+                <span class="result-value" id="resultItem">-</span>
+            </div>
+
+            <div class="result-valor-sorteado">
+                <div class="label">💰 Valor Sorteado</div>
+                <div class="valor" id="resultValor">$ 0,00</div>
+            </div>
+
+            <div class="button-group">
+                <button onclick="sortearNovamente()">🔄 Sortear Novamente</button>
+                <button class="btn-secondary" onclick="copiarResultado()">📋 Copiar Resumo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SOLICITAÇÃO DE DEVOLUÇÃO -->
+    <div class="solicitacao-box" id="solicitacaoBox">
+        <h3>📝 Solicitação de Devolução</h3>
+        
+        <div class="solicitacao-content">
+            <div class="solicitacao-texto" id="solicitacaoTexto"></div>
+        </div>
+        <button class="btn-copy" onclick="copiarSolicitacao()">📋 Copiar Solicitação</button>
+
+        <div class="solicitacao-content">
+            <div class="comando-texto" id="comandoTexto"></div>
+        </div>
+        <button class="btn-copy" onclick="copiarComando()">📋 Copiar Comando</button>
+    </div>
+
+    <!-- HISTÓRICO -->
+    <div class="historico-box">
+        <h3>📊 Histórico de Sorteios</h3>
+        <div id="historicoLista">
+            <div class="empty-historico">Nenhum sorteio realizado ainda</div>
+        </div>
+        <button onclick="limparHistorico()" style="margin-top: 15px;">🗑️ Limpar Histórico</button>
+    </div>
+</div>
+
+<script>
+const acoes = [
+    { nome: "AÇOUGUE", minimo: 600089, maximo: 1800000, item: "pendrive" },
+    { nome: "AEROPORTO ABANDONADO", minimo: 980000, maximo: 2500000, item: "pendrive" },
+    { nome: "BANCO CENTRAL", minimo: 2000089, maximo: 8000000, item: "c4" },
+    { nome: "BANCO PALETO", minimo: 5500000, maximo: 8000000, item: "c4" },
+    { nome: "BARBEARIA", minimo: 5000, maximo: 30000, item: "keycard" },
+    { nome: "BEBIDAS", minimo: 200810, maximo: 400000, item: "keycard" },
+    { nome: "CAIXINHA ELETRONICA", minimo: 20081, maximo: 45000, item: "keycard" },
+    { nome: "ESTUDIO", minimo: 2000000, maximo: 2008100, item: "pendrive" },
+    { nome: "FACULDADE", minimo: 4000000, maximo: 8000000, item: "c4" },
+    { nome: "FERRO VELHO", minimo: 1100000, maximo: 2600000, item: "pendrive" },
+    { nome: "BANCO FLECC", minimo: 3800000, maximo: 4500000, item: "c4" },
+    { nome: "FORT ZANCUDO", minimo: 1960000, maximo: 5000000, item: "pendrive" },
+    { nome: "GALINHEIRO", minimo: 600089, maximo: 1800000, item: "pendrive" },
+    { nome: "INDUSTRIA", minimo: 1800000, maximo: 2500000, item: "pendrive" },
+    { nome: "JOALHERIA", minimo: 4500000, maximo: 6000000, item: "c4" },
+    { nome: "LOJINHA", minimo: 200810, maximo: 400000, item: "keycard" },
+    { nome: "MAZEBANK PRAIA", minimo: 15000, maximo: 20000, item: "keycard" },
+    { nome: "OBSERVATÓRIO", minimo: 1100000, maximo: 2600000, item: "pendrive" },
+    { nome: "PORTO", minimo: 2000089, maximo: 10000000, item: "c4" },
+    { nome: "TREVOR", minimo: 700000, maximo: 2000000, item: "pendrive" },
+    { nome: "YELLOW", minimo: 200810, maximo: 400000, item: "pendrive" },
+    { nome: "AMMUNATION", minimo: 10000, maximo: 18000, item: "keycard" },
+    { nome: "PORTA AVIOES", minimo: 8500000, maximo: 10000000, item: "keycard" },
+    { nome: "MALBOR", minimo: 600000, maximo: 800000, item: "pendrive" },
+    { nome: "CASAS MC", minimo: 200000, maximo: 200810, item: "keycard" },
+    { nome: "BAR MC", minimo: 200000, maximo: 200810, item: "keycard" },
+    { nome: "MINI PORTO", minimo: 2000089, maximo: 7000000, item: "c4" },
+    { nome: "CYPRESS", minimo: 980000, maximo: 2500000, item: "pendrive" },
+    { nome: "SANDY SHORES", minimo: 2000089, maximo: 7500000, item: "pendrive" },
+    { nome: "COMEDY CLUB", minimo: 300001, maximo: 900000, item: "pendrive" },
+    { nome: "CELEIRO", minimo: 200810, maximo: 500000, item: "keycard" },
+    { nome: "CLUB", minimo: 600089, maximo: 1500000, item: "pendrive" },
+    { nome: "NIOBIO", minimo: 2000890, maximo: 11000000, item: "c4" },
+    { nome: "ANTENA", minimo: 600000, maximo: 1200000, item: "pendrive" },
+    { nome: "PRISÃO ALCATRAZ", minimo: 5000000, maximo: 7000000, item: "c4" },
+    { nome: "VESPUCCI", minimo: 980000, maximo: 2500000, item: "keycard" }
+];
+
+let historico = [];
+let ultimoSorteio = null;
+
+function formatarDinheiro(valor) {
+    return '$ ' + valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function sortearValor(minimo, maximo) {
+    return Math.floor(Math.random() * (maximo - minimo + 1)) + minimo;
+}
+
+function popularSelect() {
+    const select = document.getElementById('selectAcao');
+    
+    acoes.forEach((acao, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = acao.nome;
+        select.appendChild(option);
+    });
+}
+
+function habilitarBotao() {
+    const select = document.getElementById('selectAcao');
+    const input = document.getElementById('inputPlayerId');
+    const btn = document.getElementById('btnSortear');
+    btn.disabled = select.value === '' || input.value.trim() === '';
+}
+
+function sortearAcao() {
+    const select = document.getElementById('selectAcao');
+    const playerId = document.getElementById('inputPlayerId').value.trim();
+    const index = parseInt(select.value);
+    
+    if (isNaN(index) || playerId === '') return;
+    
+    const acao = acoes[index];
+    const valorSorteado = sortearValor(acao.minimo, acao.maximo);
+    
+    // Salvar último sorteio
+    ultimoSorteio = {
+        playerId: playerId,
+        acao: acao.nome,
+        valor: valorSorteado
+    };
+    
+    // Mostrar resultado
+    document.getElementById('resultPlayerId').textContent = playerId;
+    document.getElementById('resultNome').textContent = acao.nome;
+    document.getElementById('resultMinimo').textContent = formatarDinheiro(acao.minimo);
+    document.getElementById('resultMaximo').textContent = formatarDinheiro(acao.maximo);
+    document.getElementById('resultItem').textContent = acao.item;
+    document.getElementById('resultValor').textContent = formatarDinheiro(valorSorteado);
+    
+    document.getElementById('resultBox').classList.add('show');
+    
+    // Gerar solicitação e comando
+    gerarSolicitacao(playerId, acao.nome, valorSorteado);
+    
+    // Adicionar ao histórico
+    historico.unshift({
+        playerId: playerId,
+        nome: acao.nome,
+        valor: valorSorteado,
+        timestamp: new Date()
+    });
+    
+    atualizarHistorico();
+    
+    // Scroll suave até o resultado
+    document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function gerarSolicitacao(playerId, acaoNome, valorSorteado) {
+    const textoSolicitacao = `SOLICITAÇÃO DE DEVOLUÇÃO
+ID: ${playerId}
+Motivo: Ganhou ação marcada ${acaoNome}
+Itens: dinheiro sujo ${valorSorteado.toLocaleString('pt-BR')}
+Provas:
+<@&1362168080716927133>`;
+
+    const textoComando = `solicitar ${playerId} dinheirosujo ${valorSorteado}`;
+    
+    document.getElementById('solicitacaoTexto').textContent = textoSolicitacao;
+    document.getElementById('comandoTexto').textContent = textoComando;
+    
+    document.getElementById('solicitacaoBox').classList.add('show');
+}
+
+function sortearNovamente() {
+    sortearAcao();
+}
+
+function copiarResultado() {
+    const playerId = document.getElementById('resultPlayerId').textContent;
+    const nome = document.getElementById('resultNome').textContent;
+    const valor = document.getElementById('resultValor').textContent;
+    
+    const texto = `NEXUS - Sorteio de Ação\n\nID do Player: ${playerId}\nAção: ${nome}\nValor Sorteado: ${valor}`;
+    
+    navigator.clipboard.writeText(texto).then(() => {
+        alert('✅ Resultado copiado para a área de transferência!');
+    });
+}
+
+function copiarSolicitacao() {
+    const texto = document.getElementById('solicitacaoTexto').textContent;
+    
+    navigator.clipboard.writeText(texto).then(() => {
+        alert('✅ Solicitação copiada para a área de transferência!');
+    });
+}
+
+function copiarComando() {
+    const texto = document.getElementById('comandoTexto').textContent;
+    
+    navigator.clipboard.writeText(texto).then(() => {
+        alert('✅ Comando copiado para a área de transferência!');
+    });
+}
+
+function atualizarHistorico() {
+    const lista = document.getElementById('historicoLista');
+    
+    if (historico.length === 0) {
+        lista.innerHTML = '<div class="empty-historico">Nenhum sorteio realizado ainda</div>';
+        return;
+    }
+    
+    lista.innerHTML = '';
+    
+    historico.slice(0, 10).forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'historico-item';
+        div.innerHTML = `
+            <div class="historico-item-nome">ID: ${item.playerId} - ${item.nome}</div>
+            <div class="historico-item-valor">${formatarDinheiro(item.valor)}</div>
+        `;
+        lista.appendChild(div);
+    });
+}
+
+function limparHistorico() {
+    if (confirm('Deseja realmente limpar todo o histórico?')) {
+        historico = [];
+        atualizarHistorico();
+    }
+}
+
+// Event listeners
+document.getElementById('selectAcao').addEventListener('change', habilitarBotao);
+document.getElementById('inputPlayerId').addEventListener('input', habilitarBotao);
+
+// Inicializar
+window.onload = function() {
+    popularSelect();
+};
+</script>
+
+</body>
+</html>
