@@ -241,11 +241,11 @@
         }
 
         .btn-secondary {
-            background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
         }
 
         .btn-secondary:hover {
-            background: linear-gradient(135deg, #357abd 0%, #2d5a8f 100%);
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
         }
 
         /* SOLICITAÇÃO */
@@ -326,6 +326,14 @@
             margin-bottom: 10px;
             border-radius: 6px;
             border-left: 4px solid #ff3b3b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .historico-item-info {
+            flex: 1;
         }
 
         .historico-item-nome {
@@ -338,6 +346,28 @@
             color: #4ade80;
             font-weight: 600;
             font-size: 18px;
+        }
+
+        .btn-carregar {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+            min-width: 80px;
+            width: auto;
+        }
+
+        .btn-carregar:hover {
+            background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.5);
         }
 
         .empty-historico {
@@ -378,6 +408,15 @@
 
             .button-group {
                 flex-direction: column;
+            }
+
+            .historico-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn-carregar {
+                width: 100%;
             }
         }
     </style>
@@ -445,7 +484,6 @@
 
             <div class="button-group">
                 <button onclick="sortearNovamente()">🔄 Sortear Novamente</button>
-                <button class="btn-secondary" onclick="copiarResultado()">📋 Copiar Resumo</button>
             </div>
         </div>
     </div>
@@ -608,23 +646,13 @@ function sortearNovamente() {
     sortearAcao();
 }
 
-function copiarResultado() {
-    const playerId = document.getElementById('resultPlayerId').textContent;
-    const nome = document.getElementById('resultNome').textContent;
-    const valor = document.getElementById('resultValor').textContent;
-    
-    const texto = `NEXUS - Sorteio de Ação\n\nID do Player: ${playerId}\nAção: ${nome}\nValor Sorteado: ${valor}`;
-    
-    navigator.clipboard.writeText(texto).then(() => {
-        alert('✅ Resultado copiado para a área de transferência!');
-    });
-}
-
 function copiarSolicitacao() {
     const texto = document.getElementById('solicitacaoTexto').textContent;
     
     navigator.clipboard.writeText(texto).then(() => {
-        alert('✅ Solicitação copiada para a área de transferência!');
+        // Sem alerta
+    }).catch(err => {
+        console.error('Erro ao copiar:', err);
     });
 }
 
@@ -632,8 +660,43 @@ function copiarComando() {
     const texto = document.getElementById('comandoTexto').textContent;
     
     navigator.clipboard.writeText(texto).then(() => {
-        alert('✅ Comando copiado para a área de transferência!');
+        // Sem alerta
+    }).catch(err => {
+        console.error('Erro ao copiar:', err);
     });
+}
+
+function carregarSorteio(index) {
+    const item = historico[index];
+    if (!item) return;
+    
+    // Preencher os campos
+    document.getElementById('inputPlayerId').value = item.playerId;
+    
+    // Encontrar o índice da ação
+    const acaoIndex = acoes.findIndex(a => a.nome === item.nome);
+    if (acaoIndex !== -1) {
+        document.getElementById('selectAcao').value = acaoIndex;
+    }
+    
+    habilitarBotao();
+    
+    // Mostrar resultado anterior
+    const acao = acoes[acaoIndex];
+    document.getElementById('resultPlayerId').textContent = item.playerId;
+    document.getElementById('resultNome').textContent = item.nome;
+    document.getElementById('resultMinimo').textContent = formatarDinheiro(acao.minimo);
+    document.getElementById('resultMaximo').textContent = formatarDinheiro(acao.maximo);
+    document.getElementById('resultItem').textContent = acao.item;
+    document.getElementById('resultValor').textContent = formatarDinheiro(item.valor);
+    
+    document.getElementById('resultBox').classList.add('show');
+    
+    // Gerar solicitação e comando
+    gerarSolicitacao(item.playerId, item.nome, item.valor);
+    
+    // Scroll suave até o seletor
+    document.querySelector('.selector-box').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function atualizarHistorico() {
@@ -646,12 +709,15 @@ function atualizarHistorico() {
     
     lista.innerHTML = '';
     
-    historico.slice(0, 10).forEach(item => {
+    historico.slice(0, 10).forEach((item, index) => {
         const div = document.createElement('div');
         div.className = 'historico-item';
         div.innerHTML = `
-            <div class="historico-item-nome">ID: ${item.playerId} - ${item.nome}</div>
-            <div class="historico-item-valor">${formatarDinheiro(item.valor)}</div>
+            <div class="historico-item-info">
+                <div class="historico-item-nome">ID: ${item.playerId} - ${item.nome}</div>
+                <div class="historico-item-valor">${formatarDinheiro(item.valor)}</div>
+            </div>
+            <button class="btn-carregar" onclick="carregarSorteio(${index})">📂 Carregar</button>
         `;
         lista.appendChild(div);
     });
