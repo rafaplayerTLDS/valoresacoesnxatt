@@ -556,6 +556,33 @@ const acoes = [
 let historico = [];
 let ultimoSorteio = null;
 
+// Carregar histórico ao iniciar
+function carregarHistoricoStorage() {
+    const historicoSalvo = localStorage.getItem('nexus_historico');
+    if (historicoSalvo) {
+        try {
+            historico = JSON.parse(historicoSalvo);
+            // Converter timestamps de volta para Date
+            historico = historico.map(item => ({
+                ...item,
+                timestamp: new Date(item.timestamp)
+            }));
+        } catch (e) {
+            console.error('Erro ao carregar histórico:', e);
+            historico = [];
+        }
+    }
+}
+
+// Salvar histórico no localStorage
+function salvarHistoricoStorage() {
+    try {
+        localStorage.setItem('nexus_historico', JSON.stringify(historico));
+    } catch (e) {
+        console.error('Erro ao salvar histórico:', e);
+    }
+}
+
 function formatarDinheiro(valor) {
     return '$ ' + valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
@@ -620,6 +647,7 @@ function sortearAcao() {
         timestamp: new Date()
     });
     
+    salvarHistoricoStorage();
     atualizarHistorico();
     
     // Scroll suave até o resultado
@@ -726,6 +754,7 @@ function atualizarHistorico() {
 function limparHistorico() {
     if (confirm('Deseja realmente limpar todo o histórico?')) {
         historico = [];
+        salvarHistoricoStorage();
         atualizarHistorico();
     }
 }
@@ -736,7 +765,9 @@ document.getElementById('inputPlayerId').addEventListener('input', habilitarBota
 
 // Inicializar
 window.onload = function() {
+    carregarHistoricoStorage();
     popularSelect();
+    atualizarHistorico();
 };
 </script>
 
