@@ -342,6 +342,12 @@
             margin-bottom: 5px;
         }
 
+        .historico-item-data {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 5px;
+        }
+
         .historico-item-valor {
             color: #4ade80;
             font-weight: 600;
@@ -583,6 +589,17 @@ function salvarHistoricoStorage() {
     }
 }
 
+function formatarDataHora(data) {
+    const dia = String(data.getDate()).padStart(2, '0');
+    const mes = String(data.getMonth() + 1).padStart(2, '0');
+    const ano = data.getFullYear();
+    const hora = String(data.getHours()).padStart(2, '0');
+    const minuto = String(data.getMinutes()).padStart(2, '0');
+    const segundo = String(data.getSeconds()).padStart(2, '0');
+    
+    return `${dia}/${mes}/${ano} às ${hora}:${minuto}:${segundo}`;
+}
+
 function formatarDinheiro(valor) {
     return '$ ' + valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
@@ -743,6 +760,7 @@ function atualizarHistorico() {
         div.innerHTML = `
             <div class="historico-item-info">
                 <div class="historico-item-nome">ID: ${item.playerId} - ${item.nome}</div>
+                <div class="historico-item-data">📅 ${formatarDataHora(item.timestamp)}</div>
                 <div class="historico-item-valor">${formatarDinheiro(item.valor)}</div>
             </div>
             <button class="btn-carregar" onclick="carregarSorteio(${index})">📂 Carregar</button>
